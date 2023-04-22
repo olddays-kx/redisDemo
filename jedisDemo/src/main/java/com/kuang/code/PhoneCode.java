@@ -4,19 +4,34 @@ import redis.clients.jedis.Jedis;
 
 import java.util.Random;
 
+/**
+ * @Author: KX
+ * @Description: 模拟发送手机验证码 并进行验证
+ * @DateTime: 2023/4/17
+ * @Version 1.0
+ */
+
 public class PhoneCode {
+    private static Jedis jedis = new Jedis("192.168.67.131", 6379);
     public static void main(String[] args) {
         //发送验证码
         //sendCode("13700445780");
 
         //校验验证码
-        verifyCode("13700445780", "611241");
+        verifyCode("13700445780", "183388");
     }
 
 
-    //验证验证码
+    /**
+     * @Description: 验证验证码
+     * @Author: KX
+     * @Date: 2023/4/17
+     * @Param:
+     * @Return:
+     * @Throws:
+     */
     public static void verifyCode(String phone, String code) {
-        Jedis jedis = new Jedis("192.168.67.131", 6379);
+        //Jedis jedis = new Jedis("192.168.67.131", 6379);
         //存储验证码的key
         String codeKey = "verifyCode:" + phone + ":code";
         //从redis中获取code
@@ -30,10 +45,17 @@ public class PhoneCode {
         }
         jedis.close();
     }
-    //发送验证码
-    //一个手机号一天只能发送三次， 验证码过期时间是2分钟
+
+    /**
+     * @Description:  //发送验证码 一个手机号一天只能发送三次， 验证码过期时间是2分钟
+     * @Author: KX
+     * @Date: 2023/4/17
+     * @Param:
+     * @Return:
+     * @Throws:
+     */
     public static void sendCode(String phone) {
-        Jedis jedis = new Jedis("192.168.67.131", 6379);
+        //Jedis jedis = new Jedis("192.168.67.131", 6379);
 
         //设置key的规则
         //手机号发送次数key
@@ -58,11 +80,20 @@ public class PhoneCode {
         }
 
         //将验证码存到redis中并设置过期时长为2分钟
-        jedis.setex(codeKey, 120, getCode());
+        String  code = getCode();
+        jedis.setex(codeKey, 120, code);
+        System.out.println(code);
         jedis.close();
 
     }
-    //生成6位验证码
+    /**
+     * @Description: 生成6位验证码
+     * @Author: KX
+     * @Date: 2023/4/17
+     * @Param:
+     * @Return:
+     * @Throws:
+     */
     public static String getCode() {
         Random random = new Random();
         String code = "";
